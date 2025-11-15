@@ -1,0 +1,66 @@
+{
+  "name": "@diegoaltoworks/zipper",
+  "version": "1.0.0",
+  "description": "A modern TypeScript package for downloading multiple files and combining them into a ZIP archive",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "author": "Diego Alto <diego@diegoalto.works>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/diegoaltoworks/zipper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/diegoaltoworks/zipper/issues"
+  },
+  "homepage": "https://diegoaltoworks.github.io/zipper",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "jest --testTimeout=10000",
+    "test:watch": "jest --watch --testTimeout=10000",
+    "test:coverage": "jest --coverage --testTimeout=10000",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"__tests__/**/*.ts\"",
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run lint && npm run test && npm run build"
+  },
+  "keywords": [
+    "download",
+    "zip",
+    "bulk",
+    "files",
+    "browser",
+    "jszip",
+    "file-saver"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/file-saver": "^2.0.7",
+    "@types/jest": "^29.5.11",
+    "@typescript-eslint/eslint-plugin": "^6.17.0",
+    "@typescript-eslint/parser": "^6.17.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "prettier": "^3.1.1",
+    "rollup": "^4.9.2",
+    "rollup-plugin-dts": "^6.1.0",
+    "ts-jest": "^29.1.1",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1"
+  }
+}
