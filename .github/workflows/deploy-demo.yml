@@ -57,7 +57,7 @@ jobs:
           NEXT_PUBLIC_BASE_PATH: /zipper
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./demo/out
 
