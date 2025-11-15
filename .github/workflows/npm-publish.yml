@@ -2,16 +2,50 @@ name: Publish to NPM
 
 on:
   push:
-    tags:
-      - 'v*'  # Trigger on version tags like v1.0.0, v1.2.3
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'package.json'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]' && github.actor != 'dependabot[bot]'
+    outputs:
+      version-changed: ${{ steps.check.outputs.changed }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - id: check
+        run: |
+          CURR=$(node -p "require('./package.json').version")
+          echo "version=$CURR" >> $GITHUB_OUTPUT
+
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            PREV=$(git show HEAD^:package.json | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8')).version")
+            if [ "$CURR" != "$PREV" ]; then
+              echo "Version changed from $PREV to $CURR"
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "Version unchanged: $CURR"
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "Initial commit, allowing publish"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
   publish:
+    needs: check-version
+    if: needs.check-version.outputs.version-changed == 'true'
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
       id-token: write  # Required for npm provenance
 
     steps:
@@ -45,20 +79,19 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: v${{ needs.check-version.outputs.version }}
+          name: Release v${{ needs.check-version.outputs.version }}
           body: |
             Published to NPM
 
             ## Installation
             ```bash
-            npm install @diegoaltoworks/zipper
+            npm install @diegoaltoworks/zipper@${{ needs.check-version.outputs.version }}
             ```
 
             See [CHANGELOG](./CHANGELOG.md) for details.
+          generate_release_notes: true
           draft: false
           prerelease: false
