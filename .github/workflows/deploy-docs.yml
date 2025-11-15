@@ -9,10 +9,6 @@ on:
       - 'src/**'
       - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:  # Allow manual trigger
-  workflow_run:
-    workflows: ["Publish on Merge"]
-    types:
-      - completed
 
 permissions:
   contents: read
