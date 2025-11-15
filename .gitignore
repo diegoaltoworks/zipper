@@ -24,3 +24,8 @@ playwright/.cache/
 
 # Misc
 .turbo/
+
+# Release files
+*.tgz
+*.gz
+*.zip
