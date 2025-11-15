@@ -1,0 +1,56 @@
+name: Publish on Merge
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'package.json'
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    # Skip if commit was made by a bot to prevent recursion
+    if: github.actor != 'github-actions[bot]' && github.actor != 'dependabot[bot]'
+    outputs:
+      changed: ${{ steps.check.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: check
+        run: |
+          CURR=$(node -p "require('./package.json').version")
+          # Check if HEAD^ exists (skip if initial commit)
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            PREV=$(git show HEAD^:package.json | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf-8')).version")
+            if [ "$CURR" != "$PREV" ]; then
+              echo "Version changed from $PREV to $CURR"
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "Version unchanged: $CURR"
+            fi
+          else
+            echo "Initial commit detected, allowing publish"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+  publish:
+    needs: check-version
+    if: needs.check-version.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

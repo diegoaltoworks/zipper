@@ -1,0 +1,11 @@
+# Claude Code Rules for Zipper Project
+
+## Git Commits
+- Never add "Co-Authored-By: Claude" trailers to commits
+- Keep commits attributed only to the human author
+- Use simple, clear commit messages without AI attribution
+
+## Code Style
+- Follow existing TypeScript conventions
+- Maintain test coverage above 80%
+- Keep code simple and maintainable
