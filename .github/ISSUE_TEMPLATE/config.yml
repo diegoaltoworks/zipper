@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or Discussion
+    url: https://github.com/diegoaltoworks/zipper/discussions
+    about: Ask questions or discuss ideas
+  - name: Security Vulnerability
+    url: https://github.com/diegoaltoworks/zipper/security/advisories/new
+    about: Report security vulnerabilities privately
+  - name: Documentation
+    url: https://github.com/diegoaltoworks/zipper#readme
+    about: View package documentation

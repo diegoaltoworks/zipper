@@ -5,6 +5,12 @@
 
 export { zipper } from './zipper';
 
+export {
+  checkBrowserCompatibility,
+  warnIfUnsupported,
+  getUnsupportedMessage,
+} from './browserCompat';
+
 export type {
   FileInput,
   DownloadOptions,
@@ -12,3 +18,5 @@ export type {
   ErrorCallback,
   DownloadedFile,
 } from './types';
+
+export type { CompatibilityStatus } from './browserCompat';

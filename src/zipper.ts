@@ -2,6 +2,7 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import type { FileInput, DownloadOptions, DownloadedFile } from './types';
 import { fetchFile } from './fetchFile';
+import { warnIfUnsupported, getUnsupportedMessage } from './browserCompat';
 
 /**
  * Downloads multiple files and combines them into a single ZIP archive
@@ -26,9 +27,14 @@ export async function zipper(
   files: FileInput[],
   options: DownloadOptions = {}
 ): Promise<void> {
-  // Validate inputs
   if (!files || files.length === 0) {
     throw new Error('No files provided to download');
+  }
+
+  const isSupported = warnIfUnsupported();
+  if (!isSupported) {
+    const message = getUnsupportedMessage();
+    throw new Error(message || 'Browser not supported');
   }
 
   const {
